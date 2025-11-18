@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.insa.ms.studentMS.model.Skill;
 import fr.insa.ms.studentMS.model.Student;
+import fr.insa.ms.studentMS.repository.SkillRepository;
 import fr.insa.ms.studentMS.repository.StudentRepository;
 
 @RestController
@@ -21,10 +23,13 @@ import fr.insa.ms.studentMS.repository.StudentRepository;
 public class StudentResource {
 	
 	private StudentRepository studentRepository;
+	private SkillRepository skillRepository;
+
 	
 	@Autowired
-	public StudentResource(StudentRepository studentRepository) {
+	public StudentResource(StudentRepository studentRepository, SkillRepository skillRepository) {
 		this.studentRepository = studentRepository;
+		this.skillRepository = skillRepository;
 	}
 	
 	@GetMapping
@@ -63,10 +68,29 @@ public class StudentResource {
 	    student.setEmail(updatedStudent.getEmail());
 	    student.setFiliere(updatedStudent.getFiliere());
 	    student.setEtablissement(updatedStudent.getEtablissement());
-	    student.setEstTuteur(updatedStudent.isEstTuteur());
+	    student.setEstTuteur(updatedStudent.isTuteur());
 	    student.setMdp(updatedStudent.getMdp());
 
 	    return studentRepository.save(student);
 	}
+	
+	@PostMapping("/{id}/skills")
+    public Skill addCompetenceToStudent(@PathVariable Integer id,
+                                             @RequestBody Skill competence) {
+
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        competence.setStudent(student);
+
+        student.getCompetences().add(competence);
+
+        return skillRepository.save(competence);
+    }
+
+    @GetMapping("/{id}/skills")
+    public List<Skill> getCompetencesOfStudent(@PathVariable Integer id) {
+        return skillRepository.findByStudent_Id(id);
+    }
 
 }

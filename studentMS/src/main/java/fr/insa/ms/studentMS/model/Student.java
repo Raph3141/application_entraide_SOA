@@ -1,5 +1,8 @@
 package fr.insa.ms.studentMS.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity //This tells JPA: this class is mapped to a table in the database
@@ -23,8 +26,14 @@ public class Student {
 	private boolean estTuteur;
 	@Column(name = "mdp")
 	private String mdp;
-	/*private List<String> competences;
-	private List<String> disponibilites;*/
+	
+	// 1 student -> many skills
+    @OneToMany(
+            mappedBy = "student",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Skill> competences = new ArrayList<>();
 	
 	public Student() {
 		
@@ -83,23 +92,29 @@ public class Student {
 	public void setMdp(String mdp) {
 		this.mdp = mdp;
 	}
-	public boolean isEstTuteur() {
+	public boolean isTuteur() {
 		return estTuteur;
 	}
 	public void setEstTuteur(boolean estTuteur) {
 		this.estTuteur = estTuteur;
 	}
-	/*public List<String> getDisponibilites() {
-		return disponibilites;
-	}
-	public void setDisponibilites(List<String> disponibilites) {
-		this.disponibilites = disponibilites;
-	}
-	public List<String> getCompetences() {
-		return competences;
-	}
-	public void setCompetences(List<String> competences) {
-		this.competences = competences;
-	}*/
+
+    public List<Skill> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(List<Skill> competences) {
+        this.competences = competences;
+    }
+
+    public void addCompetence(Skill competence) {
+        competences.add(competence);
+        competence.setStudent(this);
+    }
+
+    public void removeCompetence(Skill competence) {
+        competences.remove(competence);
+        competence.setStudent(null);
+    }
 
 }
