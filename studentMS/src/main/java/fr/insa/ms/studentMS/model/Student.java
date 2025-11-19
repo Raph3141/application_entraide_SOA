@@ -1,22 +1,59 @@
 package fr.insa.ms.studentMS.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
+
+@Entity //This tells JPA: this class is mapped to a table in the database
+@Table(name="Etudiant") //The table’s name is Etudiant
 public class Student {
-	private int id;
+	@Id //Primary key field
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //DB will auto-generate the ID
+	@Column(name = "idEtudiant")
+	private Integer id;
+	@Column(name = "nom")
 	private String nom;
+	@Column(name = "prenom")
 	private String prenom;
+	@Column(name = "email")
 	private String email;
+	@Column(name = "filiere")
 	private String filiere;
+	@Column(name = "etablissement")
 	private String etablissement;
+	@Column(name = "estTuteur")
 	private boolean estTuteur;
-	private String pwd;
-	private List<String> competences;
-	private List<String> disponibilites;
-	public int getId() {
+	@Column(name = "mdp")
+	private String mdp;
+	
+	// 1 student -> many skills
+    @OneToMany(
+            mappedBy = "student",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Skill> competences = new ArrayList<>();
+	
+	public Student() {
+		
+	}
+	
+	public Student(Integer id, String nom, String prenom, String email, String filiere, String etablissement, boolean estTuteur, String mdp) {
+		this.id=id;
+		this.nom=nom;
+		this.prenom=prenom;
+		this.email=email;
+		this.filiere=filiere;
+		this.etablissement=etablissement;
+		this.estTuteur=estTuteur;
+		this.mdp=mdp;
+	}
+	
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getNom() {
@@ -49,29 +86,35 @@ public class Student {
 	public void setEtablissement(String etablissement) {
 		this.etablissement = etablissement;
 	}
-	public String getPwd() {
-		return pwd;
+	public String getMdp() {
+		return mdp;
 	}
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
+	public void setMdp(String mdp) {
+		this.mdp = mdp;
 	}
-	public boolean isEstTuteur() {
+	public boolean isTuteur() {
 		return estTuteur;
 	}
 	public void setEstTuteur(boolean estTuteur) {
 		this.estTuteur = estTuteur;
 	}
-	public List<String> getDisponibilites() {
-		return disponibilites;
-	}
-	public void setDisponibilites(List<String> disponibilites) {
-		this.disponibilites = disponibilites;
-	}
-	public List<String> getCompetences() {
-		return competences;
-	}
-	public void setCompetences(List<String> competences) {
-		this.competences = competences;
-	}
+
+    public List<Skill> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(List<Skill> competences) {
+        this.competences = competences;
+    }
+
+    public void addCompetence(Skill competence) {
+        competences.add(competence);
+        competence.setStudent(this);
+    }
+
+    public void removeCompetence(Skill competence) {
+        competences.remove(competence);
+        competence.setStudent(null);
+    }
 
 }
