@@ -60,8 +60,7 @@ public class StudentResource {
 
 	@PutMapping("/{id}")
 	public Student updateStudent(@PathVariable Integer id, @RequestBody Student updatedStudent) {
-	    Student student = studentRepository.findById(id)
-	        .orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+	    Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
 
 	    student.setNom(updatedStudent.getNom());
 	    student.setPrenom(updatedStudent.getPrenom());
@@ -75,22 +74,67 @@ public class StudentResource {
 	}
 	
 	@PostMapping("/{id}/skills")
-    public Skill addCompetenceToStudent(@PathVariable Integer id,
-                                             @RequestBody Skill competence) {
+    public List<Skill> addSkillsToStudent(@PathVariable Integer id,  @RequestBody List<Skill> competences) {
 
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
 
-        competence.setStudent(student);
+        for (Skill skill : competences) {
+            skill.setStudent(student);
+            student.getCompetences().add(skill);
+        }
 
-        student.getCompetences().add(competence);
-
-        return skillRepository.save(competence);
+        return skillRepository.saveAll(competences);
     }
+	
+	@PutMapping("/{id}/skills")
+    public List<Skill> replaceSkillsofStudent(@PathVariable Integer id,  @RequestBody List<Skill> newSkills) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        List<Skill> oldSkills = skillRepository.findByStudent_id(id);
+        skillRepository.deleteAll(oldSkills);
+
+        for (Skill skill : newSkills) {
+            skill.setStudent(student);
+        }
+
+        return skillRepository.saveAll(newSkills);
+	}
 
     @GetMapping("/{id}/skills")
-    public List<Skill> getCompetencesOfStudent(@PathVariable Integer id) {
-        return skillRepository.findByStudent_Id(id);
+    public List<Skill> getSkillsOfStudent(@PathVariable Integer id) {
+        return skillRepository.findByStudent_id(id);
+    }
+    
+    @DeleteMapping("/{id}/skills")
+    public void deleteAllSkillsOfStudent(@PathVariable Integer id) {
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        List<Skill> skills = skillRepository.findByStudent_id(id);
+
+        for (Skill skill : skills) {
+        	skill.setStudent(null);
+        }
+        student.getCompetences().clear();
+
+        skillRepository.deleteAll(skills);
     }
 
-}
+    @DeleteMapping("/{id}/skills/{skillId}")
+    public void deleteSkillOfStudent(@PathVariable Integer id, @PathVariable Integer skillId) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        Skill skill = skillRepository.findById(skillId).orElseThrow(() -> new RuntimeException("Skill not found with id " + skillId));
+
+        if (skill.getStudent() == null || !skill.getStudent().getId().equals(id)) {
+            throw new RuntimeException("Skill " + skillId + " does not belong to student " + id);
+        }
+
+        student.getCompetences().remove(skill);
+
+        skillRepository.delete(skill);
+    }
+
+
+}  

@@ -10,19 +10,15 @@ public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idCompetence")   // PK dans Competence
+    @Column(name = "idCompetence") //PK dans Competence
     private Integer idCompetence;
 
     @Column(name = "competence")
     private String competence;
 
-    // many skills -> 1 student
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "id_etudiant",        // colonne FK dans Competence
-            referencedColumnName = "idEtudiant", // colonne PK dans Etudiant
-            nullable = false
-    )
+    //many skills -> 1 student
+    @ManyToOne
+    @JoinColumn(name = "id_etudiant", referencedColumnName = "idEtudiant")
     @JsonIgnore
     private Student student;
 

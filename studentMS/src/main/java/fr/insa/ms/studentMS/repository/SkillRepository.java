@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, Integer> {
-	List<Skill> findByStudent_Id(Integer id);
+	List<Skill> findByStudent_id(Integer id);
 }
+					
