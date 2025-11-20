@@ -41,6 +41,11 @@ public class StudentResource {
 		return studentRepository.findAll();
 	}
 	
+	@GetMapping("/helpers")
+	public List<Student> getAllHelperStudents(){
+		return studentRepository.findByestTuteurTrue();
+	}
+	
 	@GetMapping("/{id}")
 	public Optional<Student> getStudentById(@PathVariable Integer id){
 		if (!studentRepository.existsById(id)) {
@@ -202,6 +207,5 @@ public class StudentResource {
 
         availabilityRepository.delete(availability);
     }
-
-
+ 
 }  
