@@ -30,6 +30,10 @@ public class Student {
 	//1 student -> many skills
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Skill> competences = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Availability> disponibilites = new ArrayList<>();
+	
 	
 	public Student() {
 		
@@ -95,6 +99,24 @@ public class Student {
 		this.estTuteur = estTuteur;
 	}
 
+    public List<Availability> getDisponibilites() {
+        return disponibilites;
+    }
+
+    public void setDisponibilites(List<Availability> disponibilites) {
+        this.disponibilites = disponibilites;
+    }
+
+    public void addDisponibilites(Availability disponibilite) {
+    	disponibilites.add(disponibilite);
+        disponibilite.setStudent(this);
+    }
+
+    public void removeDisponibilite(Availability disponibilite) {
+    	disponibilites.remove(disponibilite);
+        disponibilite.setStudent(null);
+    }
+    
     public List<Skill> getCompetences() {
         return competences;
     }

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.insa.ms.studentMS.model.Availability;
 import fr.insa.ms.studentMS.model.Skill;
 import fr.insa.ms.studentMS.model.Student;
+import fr.insa.ms.studentMS.repository.AvailabilityRepository;
 import fr.insa.ms.studentMS.repository.SkillRepository;
 import fr.insa.ms.studentMS.repository.StudentRepository;
 
@@ -24,12 +26,14 @@ public class StudentResource {
 	
 	private StudentRepository studentRepository;
 	private SkillRepository skillRepository;
+	private AvailabilityRepository availabilityRepository;
 
 	
 	@Autowired
-	public StudentResource(StudentRepository studentRepository, SkillRepository skillRepository) {
+	public StudentResource(StudentRepository studentRepository, SkillRepository skillRepository, AvailabilityRepository availabilityRepository) {
 		this.studentRepository = studentRepository;
 		this.skillRepository = skillRepository;
+		this.availabilityRepository = availabilityRepository;
 	}
 	
 	@GetMapping
@@ -134,6 +138,24 @@ public class StudentResource {
         student.getCompetences().remove(skill);
 
         skillRepository.delete(skill);
+    }
+    
+    @GetMapping("/{id}/availabilities")
+    public List<Availability> getAvailabilitiesOfStudent(@PathVariable Integer id) {
+        return availabilityRepository.findByStudent_id(id);
+    }
+    
+    @PostMapping("/{id}/availabilities")
+    public List<Availability> addAvailabilitiesToStudent(@PathVariable Integer id,  @RequestBody List<Availability> disponibilites) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        for (Availability availability : disponibilites) {
+        	availability.setStudent(student);
+            student.getDisponibilites().add(availability);
+        }
+
+        return availabilityRepository.saveAll(disponibilites);
     }
 
 
