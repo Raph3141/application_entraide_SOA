@@ -157,6 +157,51 @@ public class StudentResource {
 
         return availabilityRepository.saveAll(disponibilites);
     }
+    
+    @PutMapping("/{id}/availabilities")
+    public List<Availability> replaceAvailabilitiesofStudent(@PathVariable Integer id,  @RequestBody List<Availability> newAvailabilities) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        List<Availability> oldAvailabilities = availabilityRepository.findByStudent_id(id);
+        availabilityRepository.deleteAll(oldAvailabilities);
+
+        for (Availability availability : newAvailabilities) {
+        	availability.setStudent(student);
+        }
+
+        return availabilityRepository.saveAll(newAvailabilities);
+	}
+    
+    @DeleteMapping("/{id}/availabilities")
+    public void deleteAllAvailabilitiesOfStudent(@PathVariable Integer id) {
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        List<Availability> availabilities = availabilityRepository.findByStudent_id(id);
+
+        for (Availability availability : availabilities) {
+        	availability.setStudent(null);
+        }
+        student.getDisponibilites().clear();
+
+        availabilityRepository.deleteAll(availabilities);
+    }
+    
+    @DeleteMapping("/{id}/availabilities/{availabilityId}")
+    public void deleteAvailabilityOfStudent(@PathVariable Integer id, @PathVariable Integer availabilityId) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        Availability availability = availabilityRepository.findById(availabilityId).orElseThrow(() -> new RuntimeException("Skill not found with id " + availabilityId));
+
+        if (availability.getStudent() == null || !availability.getStudent().getId().equals(id)) {
+            throw new RuntimeException("Skill " + availabilityId + " does not belong to student " + id);
+        }
+
+        student.getDisponibilites().remove(availability);
+
+        availabilityRepository.delete(availability);
+    }
 
 
 }  
