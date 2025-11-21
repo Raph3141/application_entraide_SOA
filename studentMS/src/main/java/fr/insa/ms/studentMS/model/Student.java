@@ -5,6 +5,8 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+//TEST 
+
 @Entity //defines that the class can be mapped to a table in the DB
 @Table(name="Etudiant") //The table’s name is Etudiant
 public class Student {
@@ -152,7 +154,7 @@ public class Student {
     }
 
     public void removeAvis(Review a) {
-        competences.remove(a);
+    	avis.remove(a);
         a.setStudent(null);
     }
 
