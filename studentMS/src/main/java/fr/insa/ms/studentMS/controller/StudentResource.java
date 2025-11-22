@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.insa.ms.studentMS.model.Availability;
+import fr.insa.ms.studentMS.model.Review;
 import fr.insa.ms.studentMS.model.Skill;
 import fr.insa.ms.studentMS.model.Student;
 import fr.insa.ms.studentMS.repository.AvailabilityRepository;
+import fr.insa.ms.studentMS.repository.ReviewRepository;
 import fr.insa.ms.studentMS.repository.SkillRepository;
 import fr.insa.ms.studentMS.repository.StudentRepository;
 
@@ -27,13 +29,16 @@ public class StudentResource {
 	private StudentRepository studentRepository;
 	private SkillRepository skillRepository;
 	private AvailabilityRepository availabilityRepository;
+	private ReviewRepository reviewRepository;
+
 
 	
 	@Autowired
-	public StudentResource(StudentRepository studentRepository, SkillRepository skillRepository, AvailabilityRepository availabilityRepository) {
+	public StudentResource(StudentRepository studentRepository, SkillRepository skillRepository, AvailabilityRepository availabilityRepository, ReviewRepository reviewRepository) {
 		this.studentRepository = studentRepository;
 		this.skillRepository = skillRepository;
 		this.availabilityRepository = availabilityRepository;
+		this.reviewRepository = reviewRepository;
 	}
 	
 	@GetMapping
@@ -206,6 +211,58 @@ public class StudentResource {
         student.getDisponibilites().remove(availability);
 
         availabilityRepository.delete(availability);
+    }
+    
+    @GetMapping("/{id}/reviews")
+    public List<Review> getReviewsOfStudent(@PathVariable Integer id) {
+        return reviewRepository.findByStudent_id(id);
+    }
+    
+    @PostMapping("/{id}/reviews")
+    public List<Review> addReviewsToStudent(@PathVariable Integer id,  @RequestBody List<Review> reviews) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        for (Review review : reviews) {
+        	review.setStudent(student);
+            student.getAvis().add(review);
+        }
+
+        return reviewRepository.saveAll(reviews);
+    }
+    
+    @PutMapping("/{id}/reviews")
+    public List<Review> replaceReviewsofStudent(@PathVariable Integer id,  @RequestBody List<Review> newReviews) {
+
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        List<Review> oldReviews = reviewRepository.findByStudent_id(id);
+        reviewRepository.deleteAll(oldReviews);
+
+        for (Review review : newReviews) {
+        	review.setStudent(student);
+        }
+
+        return reviewRepository.saveAll(newReviews);
+	}
+    
+    @DeleteMapping("/{id}/reviews")
+    public void deleteAllReviewsOfStudent(@PathVariable Integer id) {
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
+
+        List<Review> reviews = reviewRepository.findByStudent_id(id);
+
+        for (Review review : reviews) {
+        	review.setStudent(null);
+        }
+        student.getAvis().clear();
+
+        reviewRepository.deleteAll(reviews);
+    }
+    
+    @GetMapping("/email/{email}")
+    public Student getStudentByEmail(@PathVariable String email) {
+    	return studentRepository.findByemail(email).orElseThrow(() -> new RuntimeException("Student not found with email " + email));
     }
  
 }  
