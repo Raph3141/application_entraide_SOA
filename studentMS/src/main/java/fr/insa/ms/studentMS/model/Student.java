@@ -23,7 +23,7 @@ public class Student {
 	@Column(name = "etablissement")
 	private String etablissement;
 	@Column(name = "estTuteur")
-	private boolean estTuteur;
+	private Boolean estTuteur;
 	@Column(name = "mdp")
 	private String mdp;
 	
@@ -95,10 +95,10 @@ public class Student {
 	public void setMdp(String mdp) {
 		this.mdp = mdp;
 	}
-	public boolean isTuteur() {
+	public Boolean getEstTuteur() {
 		return estTuteur;
 	}
-	public void setEstTuteur(boolean estTuteur) {
+	public void setEstTuteur(Boolean estTuteur) {
 		this.estTuteur = estTuteur;
 	}
 

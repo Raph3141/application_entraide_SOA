@@ -30,8 +30,6 @@ public class StudentResource {
 	private SkillRepository skillRepository;
 	private AvailabilityRepository availabilityRepository;
 	private ReviewRepository reviewRepository;
-
-
 	
 	@Autowired
 	public StudentResource(StudentRepository studentRepository, SkillRepository skillRepository, AvailabilityRepository availabilityRepository, ReviewRepository reviewRepository) {
@@ -81,7 +79,7 @@ public class StudentResource {
 	    student.setEmail(updatedStudent.getEmail());
 	    student.setFiliere(updatedStudent.getFiliere());
 	    student.setEtablissement(updatedStudent.getEtablissement());
-	    student.setEstTuteur(updatedStudent.isTuteur());
+	    student.setEstTuteur(updatedStudent.getEstTuteur());
 	    student.setMdp(updatedStudent.getMdp());
 
 	    return studentRepository.save(student);
