@@ -1,11 +1,14 @@
 package fr.insa.ms.recommendationMS.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Skill {
-	
+
     private Integer idCompetence;
 
     private String competence;
-
+    
+    @JsonIgnore
     private Student student;
 
     public Skill() {

@@ -6,6 +6,6 @@ public class Demande {
     public String titre;
     public String description;
     public String mots_cles;
-    public String date_souhaitee;
+    public Day date_souhaitee;
     public String statut;
 }

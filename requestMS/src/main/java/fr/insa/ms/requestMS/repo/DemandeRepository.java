@@ -40,7 +40,7 @@ public class DemandeRepository {
 			stmt.setString(2, d.titre);
 			stmt.setString(3, d.description);
 			stmt.setString(4, d.mots_cles);
-			stmt.setString(5, d.date_souhaitee);
+	        stmt.setString(5, d.date_souhaitee != null ? d.date_souhaitee.name() : null);
 			stmt.setString(6, d.statut);
 
 			stmt.executeUpdate();
@@ -71,7 +71,7 @@ public class DemandeRepository {
 	        stmt.setString(2, d.titre);
 	        stmt.setString(3, d.description);
 	        stmt.setString(4, d.mots_cles);
-	        stmt.setString(5, d.date_souhaitee);
+	        stmt.setString(5, d.date_souhaitee != null ? d.date_souhaitee.name() : null);
 	        stmt.setString(6, d.statut);
 	        stmt.setInt(7, d.idDemande); // WHERE condition
 
