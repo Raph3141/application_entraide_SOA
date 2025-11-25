@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +24,7 @@ public class RecommendationResource {
 	private RestTemplate restTemplate;
 
 	// this method returns recommended available tutors that have the skills asked for
-	@GetMapping
+	@PostMapping
 	public ResponseEntity<?> getRecommendation(@RequestBody Demande demande) {
 
 		Student[] tutorArray = restTemplate.getForObject("http://studentMS/students/helpers", Student[].class);

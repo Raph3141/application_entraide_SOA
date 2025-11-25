@@ -10,7 +10,7 @@ public class Student {
 	private String email;
 	private String filiere;
 	private String etablissement;
-	private boolean estTuteur;
+	private Boolean estTuteur;
 	private String mdp;
     private List<Skill> competences = new ArrayList<>();
     private List<Availability> disponibilites = new ArrayList<>();
@@ -21,7 +21,7 @@ public class Student {
 		
 	}
 	
-	public Student(Integer id, String nom, String prenom, String email, String filiere, String etablissement, boolean estTuteur, String mdp) {
+	public Student(Integer id, String nom, String prenom, String email, String filiere, String etablissement, Boolean estTuteur, String mdp) {
 		this.id=id;
 		this.nom=nom;
 		this.prenom=prenom;
@@ -74,10 +74,10 @@ public class Student {
 	public void setMdp(String mdp) {
 		this.mdp = mdp;
 	}
-	public boolean isTuteur() {
+	public Boolean getEstTuteur() {
 		return estTuteur;
 	}
-	public void setEstTuteur(boolean estTuteur) {
+	public void setEstTuteur(Boolean estTuteur) {
 		this.estTuteur = estTuteur;
 	}
 

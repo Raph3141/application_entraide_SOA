@@ -1,10 +1,9 @@
 package fr.insa.ms.recommendationMS.model;
 
-import java.util.List;
-
 public class Demande {
 	public int idDemande;
-    public int id_etudiant_demandeur;
+    public Integer id_etudiant_demandeur;
+	public Integer id_etudiant_tuteur;
     public String titre;
     public String description;
     public String mots_cles;
