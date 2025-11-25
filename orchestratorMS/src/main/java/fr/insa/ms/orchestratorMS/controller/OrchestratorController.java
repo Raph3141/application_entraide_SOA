@@ -49,6 +49,7 @@ public class OrchestratorController {
 		// POST call to create request
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		newDemande.statut="Attente";
 		HttpEntity<Request> demandeRequest = new HttpEntity<>(newDemande, headers);
 
 		try {
@@ -79,6 +80,15 @@ public class OrchestratorController {
 	@PutMapping("/chooseTutor")
 	public ResponseEntity<?> chooseTutor(@RequestBody ChooseTutorRequest chooseTutorRequest) {
 
+		ResponseEntity<Student> responseGetTuteur = restTemplate
+				.exchange(STUDENT_MS_BASE_URL + "/" + chooseTutorRequest.idTuteur(), HttpMethod.GET, null, Student.class);
+		
+		Student tuteur = responseGetTuteur.getBody();
+		if (!tuteur.getEstTuteur()) {
+			return ResponseEntity.badRequest()
+					.body("The chosen tutor must have status \"estTuteur\" set to true.");
+		}
+		
 		UpdateDemandeStatusRequest updateRequest = new UpdateDemandeStatusRequest(chooseTutorRequest.idDemande(),
 				"En Cours", chooseTutorRequest.id_etudiant_demandeur(), chooseTutorRequest.idTuteur());
 		HttpHeaders headers = new HttpHeaders();
@@ -273,13 +283,13 @@ public class OrchestratorController {
 	            // on verfie qu'un tuteur a bien ete assigne
 	            if (demande.id_etudiant_tuteur == 0) {
 	                return ResponseEntity.badRequest()
-	                        .body("Aucun tuteur n'est associÃ© Ã  cette demande. Impossible de laisser un avis.");
+	                        .body("Aucun tuteur n'est associé à  cette demande. Impossible de laisser un avis.");
 	            }
 
 	            // on verifie que la demande a ete realisee
 	            if (!"Réalisée".equalsIgnoreCase(demande.statut)) {
 	                return ResponseEntity.badRequest()
-	                        .body("Un avis ne peut Ãªtre laissÃ© que pour une demande terminÃ©e.");
+	                        .body("Un avis ne peut être laissé que pour une demande terminée.");
 	            }
 
 	            // on appelle studentMS pour creer l'avis
