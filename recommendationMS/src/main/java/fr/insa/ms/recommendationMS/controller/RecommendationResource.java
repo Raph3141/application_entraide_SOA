@@ -18,11 +18,12 @@ import fr.insa.ms.recommendationMS.model.Student;
 
 @RestController
 @RequestMapping("/recommendations")
-public class RecommendationRessource {
+public class RecommendationResource {
 
 	@Autowired
 	private RestTemplate restTemplate;
 
+	// this method returns recommended available tutors that have the skills asked for
 	@GetMapping
 	public ResponseEntity<?> getRecommendation(@RequestBody Demande demande) {
 
@@ -30,12 +31,11 @@ public class RecommendationRessource {
 
 		List<Student> tutorList = Arrays.asList(tutorArray);
 		
-	    // Normalize keyword
 	    String keyword = demande.mots_cles.toLowerCase().trim();
 
 	    Day requestedDay = demande.date_souhaitee; 
 	    
-	    // Filter tutors
+	    // filter tutors
 	    List<Student> recommendedTutors = tutorList.stream()
 
 	        // competences

@@ -16,11 +16,11 @@ import fr.insa.ms.requestMS.repo.DemandeRepository;
 
 @RestController
 @RequestMapping("/requests")
-public class DemandeRessource {
+public class DemandeResource {
 
     private final DemandeRepository repo;
 
-    public DemandeRessource(DemandeRepository repo) {
+    public DemandeResource(DemandeRepository repo) {
         this.repo = repo;
     }
     
