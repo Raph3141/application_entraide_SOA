@@ -16,7 +16,6 @@ import fr.insa.ms.authenticationMS.model.Student;
 public class AuthController {
 
 	private final RestTemplate restTemplate;
-	//private static final String STUDENT_MS_BASE_URL = "http://localhost:8080/students";
 	private static final String STUDENT_MS_BASE_URL = "http://studentMS/students";
 	
 	public AuthController(RestTemplate restTemplate) {

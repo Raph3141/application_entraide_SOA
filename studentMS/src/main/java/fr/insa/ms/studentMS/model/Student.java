@@ -5,11 +5,11 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
-@Entity //defines that the class can be mapped to a table in the DB
+@Entity // defines that the class can be mapped to a table in the DB
 @Table(name="Etudiant") //The table’s name is Etudiant
 public class Student {
-	@Id //specifies the primary key of the entity
-	@GeneratedValue(strategy = GenerationType.IDENTITY) //specify the primary key generation strategy to use
+	@Id // specifies the primary key of the entity
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // specify the primary key generation strategy to use
 	@Column(name = "idEtudiant")
 	private Integer id;
 	@Column(name = "nom")
@@ -27,7 +27,7 @@ public class Student {
 	@Column(name = "mdp")
 	private String mdp;
 	
-	//1 student -> many skills
+	// 1 student -> many skills
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Skill> competences = new ArrayList<>();
     

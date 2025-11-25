@@ -1,9 +1,9 @@
-package fr.insa.ms.recommendationMS.model;
+package fr.insa.ms.requestMS.model;
 
-public class Demande {
-	public int idDemande;
+public class Request {
+	public Integer idDemande;
     public Integer id_etudiant_demandeur;
-	public Integer id_etudiant_tuteur;
+    public Integer id_etudiant_tuteur;
     public String titre;
     public String description;
     public String mots_cles;

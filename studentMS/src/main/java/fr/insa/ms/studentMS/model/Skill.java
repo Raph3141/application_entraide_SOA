@@ -10,13 +10,13 @@ public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idCompetence") //PK dans Competence
+    @Column(name = "idCompetence")
     private Integer idCompetence;
 
     @Column(name = "competence")
     private String competence;
 
-    //many skills -> 1 student
+    // many skills -> 1 student
     @ManyToOne
     @JoinColumn(name = "id_etudiant", referencedColumnName = "idEtudiant")
     @JsonIgnore

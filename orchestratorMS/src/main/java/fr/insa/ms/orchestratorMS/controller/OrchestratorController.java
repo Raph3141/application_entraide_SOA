@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import fr.insa.ms.orchestratorMS.model.Availability;
 import fr.insa.ms.orchestratorMS.model.ChooseTutorRequest;
 import fr.insa.ms.orchestratorMS.model.CreateDemandeResponse;
-import fr.insa.ms.orchestratorMS.model.Demande;
+import fr.insa.ms.orchestratorMS.model.Request;
 import fr.insa.ms.orchestratorMS.model.LeaveReviewRequest;
 import fr.insa.ms.orchestratorMS.model.Skill;
 import fr.insa.ms.orchestratorMS.model.Student;
@@ -44,16 +44,16 @@ public class OrchestratorController {
 
 	// creates a demande and returns a list of recommended tutors
 	@PostMapping("/createRequest")
-	public ResponseEntity<?> createRequest(@RequestBody Demande newDemande) {
+	public ResponseEntity<?> createRequest(@RequestBody Request newDemande) {
 
 		// POST call to create request
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<Demande> demandeRequest = new HttpEntity<>(newDemande, headers);
+		HttpEntity<Request> demandeRequest = new HttpEntity<>(newDemande, headers);
 
 		try {
-			ResponseEntity<Demande> responseDemandePost = restTemplate.exchange(REQUEST_MS_BASE_URL, HttpMethod.POST,
-					demandeRequest, Demande.class);
+			ResponseEntity<Request> responseDemandePost = restTemplate.exchange(REQUEST_MS_BASE_URL, HttpMethod.POST,
+					demandeRequest, Request.class);
 
 			// if successful POST call
 			if (responseDemandePost.getStatusCode().is2xxSuccessful()) {
@@ -80,7 +80,7 @@ public class OrchestratorController {
 	public ResponseEntity<?> chooseTutor(@RequestBody ChooseTutorRequest chooseTutorRequest) {
 
 		UpdateDemandeStatusRequest updateRequest = new UpdateDemandeStatusRequest(chooseTutorRequest.idDemande(),
-				"En Cours", chooseTutorRequest.idHelpSeeker(), chooseTutorRequest.idTutor());
+				"En Cours", chooseTutorRequest.id_etudiant_demandeur(), chooseTutorRequest.idTuteur());
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<UpdateDemandeStatusRequest> updateRequestEntity = new HttpEntity<>(updateRequest, headers);
@@ -104,27 +104,27 @@ public class OrchestratorController {
 	public ResponseEntity<?> updateDemandeStatus(@RequestBody UpdateDemandeStatusRequest request) {
 
 		try {
-			ResponseEntity<Demande> responseDemandeGet = restTemplate
-					.exchange(REQUEST_MS_BASE_URL + "/" + request.idDemande(), HttpMethod.GET, null, Demande.class);
+			ResponseEntity<Request> responseDemandeGet = restTemplate
+					.exchange(REQUEST_MS_BASE_URL + "/" + request.idDemande(), HttpMethod.GET, null, Request.class);
 
 			if (responseDemandeGet.getStatusCode().is2xxSuccessful()) {
-				Demande demande = responseDemandeGet.getBody();
+				Request demande = responseDemandeGet.getBody();
 
-				if (demande.id_etudiant_demandeur != request.idHelpSeeker()) {
+				if (demande.id_etudiant_demandeur != request.id_etudiant_demandeur()) {
 					return ResponseEntity.badRequest()
 							.body("A student can only update status of a help request he made.");
 				}
-				if ("Attente".equals(request.status()) && demande.id_etudiant_tuteur != 0) {
+				if ("Attente".equals(request.statut()) && demande.id_etudiant_tuteur != 0) {
 					return ResponseEntity.badRequest()
 							.body("A help request status cannot be \"Attente\" if it already has a tutor assigned.");
 				}
-				if ("Réalisée".equals(request.status()) && demande.id_etudiant_tuteur == 0) {
+				if ("Réalisée".equals(request.statut()) && demande.id_etudiant_tuteur == 0) {
 					return ResponseEntity.badRequest()
 							.body("A help request status cannot be \"Réalisée\" if it doesn't have a tutor assigned.");
 				}
 
-				if ("En Cours".equals(request.status())) {
-					if (request.idTutor() == null) {
+				if ("En Cours".equals(request.statut())) {
+					if (request.idTuteur() == null) {
 						return ResponseEntity.badRequest()
 								.body("A help request status cannot be \"En Cours\" if we are not assigning a tutor.");
 					}
@@ -133,21 +133,21 @@ public class OrchestratorController {
 						return ResponseEntity.badRequest().body(
 								"A help request status cannot be \"En Cours\" if it already has a tutor assigned.");
 					}
-					if (request.idTutor() == request.idHelpSeeker()) {
+					if (request.idTuteur() == request.id_etudiant_demandeur()) {
 						return ResponseEntity.badRequest().body("A student asking for help cannot be his own tutor.");
 					}
 					if (!"Attente".equals(demande.statut)) {
 						return ResponseEntity.badRequest()
 								.body("A tutor can only be assigned to a help request that has status \"Attente\".");
 					}
-					demande.id_etudiant_tuteur = request.idTutor();
+					demande.id_etudiant_tuteur = request.idTuteur();
 				}
 
-				demande.statut = request.status();
+				demande.statut = request.statut();
 
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
-				HttpEntity<Demande> demandeEntity = new HttpEntity<>(demande, headers);
+				HttpEntity<Request> demandeEntity = new HttpEntity<>(demande, headers);
 
 				ResponseEntity<Map> response = restTemplate.exchange(REQUEST_MS_BASE_URL, HttpMethod.PUT, demandeEntity,
 						Map.class);
@@ -245,11 +245,11 @@ public class OrchestratorController {
 
 	        try {
 	        	//on recupere la demande initiale
-	            ResponseEntity<Demande> responseDemandeGet = restTemplate.exchange(
+	            ResponseEntity<Request> responseDemandeGet = restTemplate.exchange(
 	                    REQUEST_MS_BASE_URL + "/" + reviewRequest.idDemande(),
 	                    HttpMethod.GET,
 	                    null,
-	                    Demande.class
+	                    Request.class
 	            );
 
 	            if (!responseDemandeGet.getStatusCode().is2xxSuccessful()) {
@@ -259,13 +259,13 @@ public class OrchestratorController {
 	                        .body(responseDemandeGet.getBody());
 	            }
 
-	            Demande demande = responseDemandeGet.getBody();
+	            Request demande = responseDemandeGet.getBody();
 	            if (demande == null) {
 	                return ResponseEntity.badRequest().body("Demande introuvable.");
 	            }
 
 	            // on verifie que la demande nous appartient
-	            if (!demande.id_etudiant_demandeur.equals(reviewRequest.idHelpSeeker())) {
+	            if (!demande.id_etudiant_demandeur.equals(reviewRequest.id_etudiant_demandeur())) {
 	                return ResponseEntity.badRequest()
 	                        .body("L'étudiant ne peut laisser un avis que sur une demande qu'il a créée.");
 	            }
@@ -289,8 +289,8 @@ public class OrchestratorController {
 	            Map<String, Object> reviewPayload = Map.of(
 	                    "avis", reviewRequest.avis(),
 	                    "idDemande", reviewRequest.idDemande(),
-	                    "idHelpSeeker", reviewRequest.idHelpSeeker(),
-	                    "idTutor", demande.id_etudiant_tuteur   
+	                    "id_etudiant_demandeur", reviewRequest.id_etudiant_demandeur(),
+	                    "idTuteur", demande.id_etudiant_tuteur   
 	            );
 
 	            HttpEntity<Map<String, Object>> reviewEntity = new HttpEntity<>(reviewPayload, headers);

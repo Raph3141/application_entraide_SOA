@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import fr.insa.ms.requestMS.model.Day;
-import fr.insa.ms.requestMS.model.Demande;
+import fr.insa.ms.requestMS.model.Request;
 
 @Repository 
-public class DemandeRepository {
+public class RequestRepository {
 
 	@Value("${db.url}")
 	private String url;
@@ -30,61 +30,8 @@ public class DemandeRepository {
 	private Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(url, username, password);
 	}
-
-//	public int createDemande(Demande d) throws SQLException {
-//		String sql = "INSERT INTO Demande "
-//				+ "(id_etudiant_demandeur, titre, description, mots_cles, date_souhaitee, statut) "
-//				+ "VALUES (?, ?, ?, ?, ?, ?)";
-//
-//		try (Connection conn = getConnection();
-//				PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-//
-//			stmt.setInt(1, d.id_etudiant_demandeur);
-//			stmt.setString(2, d.titre);
-//			stmt.setString(3, d.description);
-//			stmt.setString(4, d.mots_cles);
-//	        stmt.setString(5, d.date_souhaitee != null ? d.date_souhaitee.name() : null);
-//			stmt.setString(6, d.statut);
-//
-//			stmt.executeUpdate();
-//
-//			ResultSet rs = stmt.getGeneratedKeys();
-//			if (rs.next()) {
-//				return rs.getInt(1); // returns generated idDemande
-//			}
-//		}
-//
-//		return -1;
-//	}
-//	
-//	public boolean updateDemande(Demande d) throws SQLException {
-//	    String sql = "UPDATE Demande SET "
-//	               + "id_etudiant_demandeur = ?, "
-//	               + "titre = ?, "
-//	               + "description = ?, "
-//	               + "mots_cles = ?, "
-//	               + "date_souhaitee = ?, "
-//	               + "statut = ? "
-//	               + "WHERE idDemande = ?";
-//
-//	    try (Connection conn = getConnection();
-//	         PreparedStatement stmt = conn.prepareStatement(sql)) {
-//
-//	        stmt.setInt(1, d.id_etudiant_demandeur);
-//	        stmt.setString(2, d.titre);
-//	        stmt.setString(3, d.description);
-//	        stmt.setString(4, d.mots_cles);
-//	        stmt.setString(5, d.date_souhaitee != null ? d.date_souhaitee.name() : null);
-//	        stmt.setString(6, d.statut);
-//	        stmt.setInt(7, d.idDemande); // WHERE condition
-//
-//	        int affectedRows = stmt.executeUpdate();
-//	        return affectedRows == 1;
-//	    }
-//	}
 	
-	 // -------------------- CREATE --------------------
-    public int createDemande(Demande d) throws SQLException {
+    public Integer createRequest(Request d) throws SQLException {
         String sql = "INSERT INTO Demande (id_etudiant_demandeur, id_etudiant_tuteur, titre, description, mots_cles, date_souhaitee, statut) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -107,14 +54,13 @@ public class DemandeRepository {
 
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                return rs.getInt(1); // returns generated idDemande
+                return rs.getInt(1); 
             }
         }
         return -1;
     }
 
-    // -------------------- DELETE --------------------
-    public boolean deleteDemande(int idDemande) throws SQLException {
+    public boolean deleteRequest(Integer idDemande) throws SQLException {
         String sql = "DELETE FROM Demande WHERE idDemande = ?";
 
         try (Connection conn = getConnection();
@@ -126,8 +72,7 @@ public class DemandeRepository {
         }
     }
 
-    // -------------------- UPDATE --------------------
-    public boolean updateDemande(Demande d) throws SQLException {
+    public boolean updateRequest(Request d) throws SQLException {
         String sql = "UPDATE Demande SET "
                    + "id_etudiant_demandeur = ?, "
                    + "id_etudiant_tuteur = ?, "
@@ -155,8 +100,7 @@ public class DemandeRepository {
         }
     }
 
-    // -------------------- GET BY ID --------------------
-    public Demande getDemandeById(int idDemande) throws SQLException {
+    public Request getRequestById(Integer idDemande) throws SQLException {
         String sql = "SELECT * FROM Demande WHERE idDemande = ?";
 
         try (Connection conn = getConnection();
@@ -166,31 +110,29 @@ public class DemandeRepository {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return mapResultSetToDemande(rs);
+                return mapResultSetToRequest(rs);
             }
         }
         return null;
     }
 
-    // -------------------- GET ALL --------------------
-    public List<Demande> getAllDemandes() throws SQLException {
+    public List<Request> getAllRequests() throws SQLException {
         String sql = "SELECT * FROM Demande";
-        List<Demande> demandes = new ArrayList<>();
+        List<Request> demandes = new ArrayList<>();
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                demandes.add(mapResultSetToDemande(rs));
+                demandes.add(mapResultSetToRequest(rs));
             }
         }
         return demandes;
     }
 
-    // -------------------- HELPER --------------------
-    private Demande mapResultSetToDemande(ResultSet rs) throws SQLException {
-        Demande d = new Demande();
+    private Request mapResultSetToRequest(ResultSet rs) throws SQLException {
+        Request d = new Request();
         d.idDemande = rs.getInt("idDemande");
         d.id_etudiant_demandeur = rs.getInt("id_etudiant_demandeur");
         d.id_etudiant_tuteur = rs.getInt("id_etudiant_tuteur");

@@ -1,6 +1,6 @@
 package fr.insa.ms.orchestratorMS.model;
 
-public class Demande {
+public class Request {
 	public Integer idDemande;
 	public Integer id_etudiant_demandeur;
 	public Integer id_etudiant_tuteur;

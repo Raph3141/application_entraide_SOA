@@ -1,5 +1,5 @@
 package fr.insa.ms.orchestratorMS.model;
 
-public record UpdateDemandeStatusRequest (int idDemande, String status, int idHelpSeeker, Integer idTutor) {
+public record UpdateDemandeStatusRequest (Integer idDemande, String statut, Integer id_etudiant_demandeur, Integer idTuteur) {
 
 }

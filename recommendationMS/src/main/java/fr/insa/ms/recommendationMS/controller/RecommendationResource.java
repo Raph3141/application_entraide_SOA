@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import fr.insa.ms.recommendationMS.model.Day;
-import fr.insa.ms.recommendationMS.model.Demande;
+import fr.insa.ms.recommendationMS.model.Request;
 import fr.insa.ms.recommendationMS.model.Student;
 
 @RestController
@@ -25,15 +25,15 @@ public class RecommendationResource {
 
 	// this method returns recommended available tutors that have the skills asked for
 	@PostMapping
-	public ResponseEntity<?> getRecommendation(@RequestBody Demande demande) {
+	public ResponseEntity<?> getRecommendation(@RequestBody Request request) {
 
 		Student[] tutorArray = restTemplate.getForObject("http://studentMS/students/helpers", Student[].class);
 
 		List<Student> tutorList = Arrays.asList(tutorArray);
 		
-	    String keyword = demande.mots_cles.toLowerCase().trim();
+	    String keyword = request.mots_cles.toLowerCase().trim();
 
-	    Day requestedDay = demande.date_souhaitee; 
+	    Day requestedDay = request.date_souhaitee; 
 	    
 	    // filter tutors
 	    List<Student> recommendedTutors = tutorList.stream()
