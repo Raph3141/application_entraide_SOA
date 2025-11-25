@@ -7,7 +7,7 @@ public class RegisterRequest {
     private String email;
     private String filiere;
     private String etablissement;
-    private boolean estTuteur;
+    private Boolean estTuteur;
     private String mdp;
 
     public String getNom() {
@@ -50,11 +50,11 @@ public class RegisterRequest {
         this.etablissement = etablissement;
     }
 
-    public boolean getEstTuteur() {
+    public Boolean getEstTuteur() {
         return estTuteur;
     }
 
-    public void setEstTuteur(boolean estTuteur) {
+    public void setEstTuteur(Boolean estTuteur) {
         this.estTuteur = estTuteur;
     }
 

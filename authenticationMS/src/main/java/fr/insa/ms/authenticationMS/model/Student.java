@@ -7,7 +7,7 @@ public class Student {
 	private String email;
 	private String filiere;
 	private String etablissement;
-	private boolean estTuteur;
+	private Boolean estTuteur;
 	private String mdp;
 
 	public Integer getId() {
@@ -52,10 +52,10 @@ public class Student {
 	public void setMdp(String mdp) {
 		this.mdp = mdp;
 	}
-	public boolean isTuteur() {
+	public Boolean getEstTuteur() {
 		return estTuteur;
 	}
-	public void setEstTuteur(boolean estTuteur) {
+	public void setEstTuteur(Boolean estTuteur) {
 		this.estTuteur = estTuteur;
 	}
 
