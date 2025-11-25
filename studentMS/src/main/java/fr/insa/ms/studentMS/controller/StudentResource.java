@@ -216,17 +216,15 @@ public class StudentResource {
         return reviewRepository.findByStudent_id(id);
     }
     
-    @PostMapping("/{id}/reviews")
-    public List<Review> addReviewsToStudent(@PathVariable Integer id,  @RequestBody List<Review> reviews) {
+    @PostMapping("/{id}/review")
+    public Review addReviewToStudent(@PathVariable Integer id,  @RequestBody Review review) {
 
         Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
 
-        for (Review review : reviews) {
-        	review.setStudent(student);
-            student.getAvis().add(review);
-        }
+		review.setStudent(student);
+		student.getAvis().add(review);
 
-        return reviewRepository.saveAll(reviews);
+        return reviewRepository.save(review);
     }
     
     @PutMapping("/{id}/reviews")
