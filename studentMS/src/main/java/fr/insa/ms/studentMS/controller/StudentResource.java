@@ -58,8 +58,16 @@ public class StudentResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-	    return ResponseEntity.ok(studentRepository.save(student));
+	public ResponseEntity<?> createStudent(@RequestBody Student student) {
+	    try {
+	    	Student saved = studentRepository.save(student);
+	        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
+	    } catch (Exception e) {
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(e.getMessage());
+	    }
 	}
 	
 	@DeleteMapping("/{id}")

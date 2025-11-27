@@ -159,7 +159,7 @@ public class OrchestratorController {
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				HttpEntity<Request> demandeEntity = new HttpEntity<>(demande, headers);
 
-				ResponseEntity<Map> response = restTemplate.exchange(REQUEST_MS_BASE_URL, HttpMethod.PUT, demandeEntity,
+				ResponseEntity<Map> response = restTemplate.exchange(REQUEST_MS_BASE_URL + "/" + request.idDemande(), HttpMethod.PUT, demandeEntity,
 						Map.class);
 
 				return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
