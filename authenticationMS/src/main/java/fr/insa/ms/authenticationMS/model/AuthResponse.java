@@ -2,21 +2,21 @@ package fr.insa.ms.authenticationMS.model;
 
 public class AuthResponse {
 	private String msg;
-	private Student student;
+	private StudentWithoutPassword student;
 	
 	public AuthResponse() {
 		
 	}
 	
-	public AuthResponse(String msg, Student student) {
+	public AuthResponse(String msg, StudentWithoutPassword student) {
 		this.msg=msg;
 		this.student=student;
 	}
 	
-	public Student getStudent() {
+	public StudentWithoutPassword getStudent() {
 		return student;
 	}
-	public void setStudent(Student student) {
+	public void setStudent(StudentWithoutPassword student) {
 		this.student = student;
 	}
 	public String getMsg() {
