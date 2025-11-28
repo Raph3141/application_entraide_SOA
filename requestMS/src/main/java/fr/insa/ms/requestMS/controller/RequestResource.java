@@ -3,6 +3,7 @@ package fr.insa.ms.requestMS.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,25 +14,41 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import fr.insa.ms.requestMS.model.Request;
+import fr.insa.ms.requestMS.model.RequestRequest;
+import fr.insa.ms.requestMS.model.Student;
 import fr.insa.ms.requestMS.repo.RequestRepository;
 
 @RestController
 @RequestMapping("/requests")
 public class RequestResource {
 
+	private final RestTemplate restTemplate;
+
+	private static final String STUDENT_MS_BASE_URL = "http://studentMS/students";
+
 	private RequestRepository requestRepository;
 
 	@Autowired
-	public RequestResource(RequestRepository requestRepository) {
+	public RequestResource(RequestRepository requestRepository, RestTemplate restTemplate) {
 		this.requestRepository = requestRepository;
+		this.restTemplate = restTemplate;
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> createRequest(@RequestBody Request newRequest) {
+	public ResponseEntity<?> createRequest(@RequestBody RequestRequest newRequest) {
+		
+		ResponseEntity<Student> responseGetStudentById = restTemplate
+				.exchange(STUDENT_MS_BASE_URL + "/" + newRequest.getId_etudiant_demandeur(), HttpMethod.GET, null, Student.class);
+		
+		Student studentHelpSeeker = responseGetStudentById.getBody();
+		
+		Request requestToSave = new Request(studentHelpSeeker, null, newRequest.titre, newRequest.description, newRequest.mots_cles, newRequest.date_souhaitee, newRequest.statut);
+		
 		try {
-	        Request saved = requestRepository.save(newRequest);
+	        Request saved = requestRepository.save(requestToSave);
 	        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 
 	    } catch (Exception e) {

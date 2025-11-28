@@ -103,4 +103,18 @@ public class Request {
 	public void setStatut(String statut) {
 		this.statut = statut;
 	}
+
+	public Request(Student etudiantDemandeur, Student etudiantTuteur, String titre, String description,
+			String mots_cles, Day date_souhaitee, String statut) {
+		super();
+		this.etudiantDemandeur = etudiantDemandeur;
+		this.etudiantTuteur = etudiantTuteur;
+		this.titre = titre;
+		this.description = description;
+		this.mots_cles = mots_cles;
+		this.date_souhaitee = date_souhaitee;
+		this.statut = statut;
+	}
+	
+	
 }
